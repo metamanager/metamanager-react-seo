@@ -1,0 +1,88 @@
+{
+  "name": "@metamanager/react-seo",
+  "version": "0.4.4",
+  "description": "Meta tag update & schema markup/structured data deployment",
+  "author": "metamanager.io & Bhargav Patel",
+  "homepage": "https://metamanager.io",
+  "main": "lib/index.js",
+  "umd:main": "lib/index.umd.js",
+  "module": "lib/index.module.js",
+  "source": "src/index.js",
+  "types": "index.d.ts",
+  "files": [
+    "lib/",
+    "src/",
+    "index.d.ts"
+  ],
+  "keywords": [
+    "metamanager",
+    "seo",
+    "meta tag",
+    "schema markup",
+    "structured data",
+    "react",
+    "javascript",
+    "typescript"
+  ],
+  "scripts": {
+    "clean": "rimraf lib",
+    "lint": "eslint . --report-unused-disable-directives",
+    "lint-fix": "eslint . --fix",
+    "test": "NODE_ENV=test BABEL_ENV=test jest",
+    "test-watch": "yarn test --watch",
+    "test-update": "yarn test -u",
+    "compile": "yarn run clean && KYT_ENV_TYPE=client NODE_ENV=production microbundle --generateTypes=false --jsx React.createElement",
+    "prepare": "yarn compile && husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metamanager/metamanager-react-seo.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/metamanager/metamanager-react-seo/issues"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.12.5",
+    "invariant": "^2.2.4",
+    "prop-types": "^15.7.2",
+    "react-fast-compare": "^3.2.0",
+    "shallowequal": "^1.1.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.19.3",
+    "@babel/core": "7.20.2",
+    "@babel/eslint-parser": "7.19.1",
+    "@babel/eslint-plugin": "7.19.1",
+    "@commitlint/cli": "16.2.3",
+    "@commitlint/config-conventional": "16.2.1",
+    "babel-preset-kyt-react": "1.3.19",
+    "enzyme": "3.11.0",
+    "enzyme-adapter-react-16": "1.15.7",
+    "enzyme-to-json": "3.6.2",
+    "eslint": "7.32.0",
+    "eslint-config-airbnb": "18.2.1",
+    "eslint-config-kyt": "1.6.2",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-jest": "26.1.4",
+    "eslint-plugin-jest-formatting": "3.1.0",
+    "eslint-plugin-json": "3.1.0",
+    "eslint-plugin-jsx-a11y": "6.6.1",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-react": "7.31.10",
+    "eslint-plugin-react-hooks": "4.6.0",
+    "husky": "7.0.4",
+    "jest": "27.5.1",
+    "jsdom": "16.4.0",
+    "microbundle": "0.15.1",
+    "prettier": "2.7.1",
+    "raf": "3.4.1",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "rimraf": "3.0.2"
+  },
+  "peerDependencies": {
+    "react": ">=16"
+  }
+}
