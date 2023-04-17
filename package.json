@@ -1,5 +1,5 @@
 {
-  "name": "@metamanager/react-seo",
+  "name": "@metamanager-seo/react-seo",
   "version": "0.4.4",
   "description": "Meta tag update & schema markup/structured data deployment",
   "author": "metamanager.io & Bhargav Patel",
@@ -84,5 +84,8 @@
   },
   "peerDependencies": {
     "react": ">=16"
+  },
+  "directories": {
+    "lib": "lib"
   }
 }
