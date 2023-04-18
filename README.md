@@ -22,12 +22,12 @@ As a **frontend developer** your can create your account and manage websites in 
 You can install **Metamanager React SEO** via NPM:
 
 ```
-npm i @metamanager-seo/react-seo
+npm i @metamanager/react-seo
 ```
 
 ## Usage/Examples
 
-Import *@metamanager-seo/react-seo* in 4 steps into your **React/Next.js project**.
+Import *@metamanager/react-seo* in 4 steps into your **React/Next.js project**.
 
 ### 1. Wrapping your application in a SEO helmet provider
 
@@ -39,7 +39,7 @@ Set 3 properties for the provider:
 
 */src/_app.js*
 ```javascript
-import { HelmetProvider } from '@metamanager-seo/react-seo';
+import { HelmetProvider } from '@metamanager/react-seo';
 import { metaManagerContext } from '../context';
 
 export default function App({ Component, pageProps }) {
@@ -113,11 +113,11 @@ export default MyDocument;
 
 ### 4. Page file customization
 
-Import & insert *SEO Helmet component* from *@metamanager-seo/react-seo* to display **meta tags & schema markups** for the **relevant page path**.
+Import & insert *SEO Helmet component* from *@metamanager/react-seo* to display **meta tags & schema markups** for the **relevant page path**.
 
 */src/pages/index.js*
 ```javascript
-import { Helmet } from '@metamanager-seo/react-seo';
+import { Helmet } from '@metamanager/react-seo';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
