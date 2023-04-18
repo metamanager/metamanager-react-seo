@@ -146,3 +146,9 @@ export default function Home() {
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
+## Subscription to the service
+
+To make the plugin work, an account must be created in https://metamanager.io.
+
+This platform allows users to **work on meta data and schema markup** which will be **sent to your website**. You will also receive the **website ID** & **API token** to **configure the plugin**. 
