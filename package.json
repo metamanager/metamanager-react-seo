@@ -1,5 +1,5 @@
 {
-  "name": "@metamanager-seo/react-seo",
+  "name": "@metamanager/react-seo",
   "version": "0.4.5",
   "description": "Meta tag update & schema markup/structured data deployment",
   "author": "metamanager.io & Bhargav Patel",
