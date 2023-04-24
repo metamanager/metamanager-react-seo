@@ -1,4 +1,4 @@
-declare module 'react-metamanager-plugin' {
+declare module '@metamanager/react-seo' {
   import * as React from 'react';
 
   interface OtherElementAttributes {
