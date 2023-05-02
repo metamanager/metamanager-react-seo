@@ -81,7 +81,8 @@ declare module '@metamanager/react-seo' {
 
   interface ProviderProps {
     context?: {};
-    webSiteId:number
+    webSiteId:number;
+    authToken:string
   }
 
   export class HelmetData {
