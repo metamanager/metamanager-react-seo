@@ -1,17 +1,17 @@
-declare module 'react-metamanager-plugin' {
-  import * as React from 'react';
+declare module "@metamanager/react-seo" {
+  import * as React from "react";
 
   interface OtherElementAttributes {
     [key: string]: string | number | boolean | null | undefined;
   }
 
-  type HtmlProps = JSX.IntrinsicElements['html'] & OtherElementAttributes;
+  type HtmlProps = JSX.IntrinsicElements["html"] & OtherElementAttributes;
 
-  type BodyProps = JSX.IntrinsicElements['body'] & OtherElementAttributes;
+  type BodyProps = JSX.IntrinsicElements["body"] & OtherElementAttributes;
 
-  type LinkProps = JSX.IntrinsicElements['link'];
+  type LinkProps = JSX.IntrinsicElements["link"];
 
-  type MetaProps = JSX.IntrinsicElements['meta'];
+  type MetaProps = JSX.IntrinsicElements["meta"];
 
   export interface HelmetTags {
     baseTag: Array<any>;
@@ -31,7 +31,11 @@ declare module 'react-metamanager-plugin' {
     encodeSpecialCharacters?: boolean;
     helmetData?: HelmetData;
     htmlAttributes?: HtmlProps;
-    onChangeClientState?: (newState: any, addedTags: HelmetTags, removedTags: HelmetTags) => void;
+    onChangeClientState?: (
+      newState: any,
+      addedTags: HelmetTags,
+      removedTags: HelmetTags
+    ) => void;
     link?: LinkProps[];
     meta?: MetaProps[];
     noscript?: Array<any>;
@@ -41,10 +45,12 @@ declare module 'react-metamanager-plugin' {
     titleAttributes?: Object;
     titleTemplate?: string;
     prioritizeSeoTags?: boolean;
-    path?: string
+    path?: string;
   }
 
-  export class Helmet extends React.Component<React.PropsWithChildren<HelmetProps>> {}
+  export class Helmet extends React.Component<
+    React.PropsWithChildren<HelmetProps>
+  > {}
 
   export interface HelmetServerState {
     base: HelmetDatum;
@@ -80,18 +86,27 @@ declare module 'react-metamanager-plugin' {
   }
 
   interface ProviderProps {
-    context?: {};
-    webSiteId:number
+    context?: HelmetContextData;
+    webSiteId: number;
+    authToken: string;
   }
 
+  export interface HelmetContextData {
+    helmet?: HelmetServerState;
+    apiData?: any;
+  }
+  
   export class HelmetData {
     constructor(context: any);
     context: {
       helmet: HelmetServerState;
+      apiData?: any;
     };
   }
 
-  export class HelmetProvider extends React.Component<React.PropsWithChildren<ProviderProps>> {
+  export class HelmetProvider extends React.Component<
+    React.PropsWithChildren<ProviderProps>
+  > {
     static canUseDOM: boolean;
   }
 }
