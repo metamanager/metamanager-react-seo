@@ -37,7 +37,7 @@ Set 3 properties for the provider:
 - *webSiteId*: ID of the website (supplied from the platform)
 - *authToken*: API token (supplied from the platform)
 
-*/src/_app.js*
+*/src/_app.tsx*
 ```javascript
 import { HelmetProvider } from '@metamanager/react-seo';
 import { metaManagerContext } from '../context';
@@ -125,7 +125,7 @@ export default MyDocument;
 
 Import & insert *SEO Helmet component* from *@metamanager/react-seo* to display **meta tags & schema markups** for the **relevant page path**.
 
-*/src/pages/index.js*
+*/src/pages/index.tsx*
 ```javascript
 import { Helmet } from '@metamanager/react-seo';
 
