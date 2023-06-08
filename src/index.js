@@ -7,6 +7,7 @@ import HelmetData from './HelmetData';
 import Dispatcher from './Dispatcher';
 import { without } from './utils';
 import { TAG_NAMES, VALID_TAG_NAMES, HTML_TAG_MAP } from './constants';
+import { getRequest } from './utils';
 
 export { default as HelmetData } from './HelmetData';
 export { default as HelmetProvider } from './Provider';
@@ -220,10 +221,10 @@ export class Helmet extends Component {
 
     return this.mapArrayTypeChildrenToProps(arrayTypeChildren, newProps);
   }
-  
-  mapDataToApi(newProps){
 
-    return {...newProps , title : this.state.apiData?.meta.tag.title??newProps.title}
+  mapDataToApi(newProps) {
+
+    return { ...newProps, title: this.state.apiData?.meta.tag.title ?? newProps.title }
   }
 
   render() {
@@ -240,12 +241,61 @@ export class Helmet extends Component {
     return helmetData ? (
       // eslint-disable-next-line react/jsx-props-no-spreading
       <Dispatcher {...newProps} context={helmetData.value} helmetData={undefined} />
-      ) : (
-        <Context.Consumer>
+    ) : (
+      <Context.Consumer>
         {(
           context // eslint-disable-next-line react/jsx-props-no-spreading
-          ) => <Dispatcher {...newProps} context={context} />}
+        ) => <Dispatcher {...newProps} context={context} />}
       </Context.Consumer>
     );
   }
 }
+export const withMetaManagerSEO = (Component) => {
+  const wrappedComponent = (props) => {
+    return (
+      <React.Fragment>
+        <Helmet path='/' apiData={props.apiData} />
+        <Component {...props} />
+      </React.Fragment>
+    )
+  };
+  return wrappedComponent;
+}
+export const withMetamanagerProps = (callback, metamanagerOptions) => {
+  return async (props) => {
+    const initialRes = await callback(props)
+    const { props: initialProps, ...restRes } = initialRes || {}
+    const { path } = initialProps || {}
+    const { webSiteId, authToken } = metamanagerOptions || {}
+    if (!path || !webSiteId || !authToken) {
+      return initialRes
+    }
+    const res = await getRequest(
+      {
+        // url: `https://api.metamanager.io/website/v1/websites/${webSiteId}/pixel?url=${path}`,
+        url: `https://api.metamanager.io/website/v1/websites/${webSiteId}/urls?view=last-edited&status=pixel&page=1&pageSize=25000&url=${path}`,
+        requestBody: {
+          method: 'GET',
+          headers: {
+            Authorization: 'Bearer ' + authToken
+          },
+        }
+      },
+    ).then(res => res.json()).then(res => {
+      const data = res?.item
+      if (data) {
+        return data
+      }
+    }).catch(err => null).finally(_ => false)
+    return {
+      props: {
+        ...initialProps,
+        apiData: res||{}
+      },
+      ...restRes
+    }
+  }
+}
+
+export const withMetamanagerServerProps = withMetamanagerProps
+export const withMetamanagerStaticProps = withMetamanagerProps

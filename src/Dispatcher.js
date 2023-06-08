@@ -21,13 +21,20 @@ export default class Dispatcher extends Component {
   componentDidUpdate() {
     this.emitChange();
   }
-
-  componentWillUnmount() {
-    const { helmetInstances } = this.props.context;
-    helmetInstances.remove(this);
-    
+  
+  /** 
+   * Added to solve client-side meta updation bug.
+   */
+  componentDidMount() {
     this.emitChange();
   }
+
+  // componentWillUnmount() {
+  //   const { helmetInstances } = this.props.context;
+  //   helmetInstances.remove(this);
+    
+  //   this.emitChange();
+  // }
 
   /** Syncs the existing data with the data from the api   */
   syncMeta(
@@ -75,18 +82,24 @@ export default class Dispatcher extends Component {
     );
 
     if (this.props.context.webSiteId && !this.props.context.apiData) {
-      getDataForWebsite(this.props.context.webSiteId, Provider.canUseDOM, this.props.path, this.props.context.authToken)
-      .then(data => {
-        // const data = res?.items?.find((i) => i.schema) // use this for json schema
-        if(!data){
-          this.updateHelmet(state)
-          return
-        }
-        // const data = res?.items?.find((i) => i.url == this.props.path)
-        setApiData(data)
-        const updatedState = this.syncMeta(state, data)
-        void this.updateHelmet(updatedState)
-      }).catch(err => console.error(err))
+      if(this.props.apiData){
+        setApiData(this.props.apiData)
+          const updatedState = this.syncMeta(state, this.props.apiData)
+          void this.updateHelmet(updatedState)
+      }else{
+        getDataForWebsite(this.props.context.webSiteId, Provider.canUseDOM, this.props.path, this.props.context.authToken)
+        .then(data => {
+          // const data = res?.items?.find((i) => i.schema) // use this for json schema
+          if(!data){
+            this.updateHelmet(state)
+            return
+          }
+          // const data = res?.items?.find((i) => i.url == this.props.path)
+          setApiData(data)
+          const updatedState = this.syncMeta(state, data)
+          void this.updateHelmet(updatedState)
+        }).catch(err => console.error(err))
+      }
     }
     else {
       void this.updateHelmet(state)

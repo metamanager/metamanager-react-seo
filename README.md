@@ -37,14 +37,15 @@ Set 3 properties for the provider:
 - *webSiteId*: ID of the website (supplied from the platform)
 - *authToken*: API token (supplied from the platform)
 
-*/src/_app.tsx*
+*/src/_app.ts*
 ```javascript
-import { HelmetProvider } from '@metamanager/react-seo';
-import { metaManagerContext } from '../context';
+import { HelmetProvider } from "@metamanager/react-seo";
+import { metamanagerContext } from "../context";
+import type { AppProps } from "next/app";
 
-export default function App({ Component, pageProps }) {
+export default function App({ Component, pageProps }: AppProps) {
     return (
-        <HelmetProvider context={metaManagerContext} webSiteId={process.env.MM_WEBSITE_ID} authToken={process.env.MM_TOKEN}>
+        <HelmetProvider context={metamanagerContext} webSiteId={process.env.MM_WEBSITE_ID} authToken={process.env.MM_TOKEN}>
             <Component {...pageProps} />
         </HelmetProvider>
     );
@@ -59,7 +60,7 @@ Initialize the **Metamanager context** here:
 ```javascript
 import { HelmetContextData } from "@metamanager/react-seo";
 
-export const metaManagerContext : HelmetContextData={}
+export const metamanagerContext : HelmetContextData={};
 ```
 
 ### 3. Meta tags & schema markup insertion (SSR)
@@ -68,47 +69,18 @@ export const metaManagerContext : HelmetContextData={}
 
 */src/\_document.tsx*
 ```javascript
-import { HelmetContextData } from "@metamanager/react-seo";
-import { metaManagerContext } from "../context";
-import Document, { Html, Head, Main, NextScript } from "next/document";
+import { metamanagerContext } from "../context";
+import { Html, Head, Main, NextScript } from "next/document";
 import { ReactNode } from "react";
 
-class MyDocument extends Document<{ metaManagerContext: HelmetContextData }> {
-    static async getInitialProps(ctx: any) {
-        const initialProps = await Document.getInitialProps(ctx);
-        /** Use this logic to wait for API call */
-        const data = new Promise((resolve, _) => {
-            let timeOut = 7;
-            let interval_time = 5000;
-            const interval = setInterval(() => {
-                timeOut -= 1;
-                if (metaManagerContext.apiData || !(timeOut > 0)) {
-                    resolve(metaManagerContext);
-                    clearInterval(interval);
-                }
-            }, interval_time);
-        });
-
-        const _hc = await data;
-
-        /** return initialProps along with the context data */
-        return { ...initialProps, metaManagerContext: _hc };
-    }
-
+export default function Document() {
     render() {
         return (
-            <Html>
-                {/** Use the data to display meta tags */}
-                {
-                    this.props.metaManagerContext?.helmet?.title?.toComponent() as ReactNode
-                }
-                {
-                    this.props.metaManagerContext?.helmet?.meta?.toComponent() as ReactNode
-                }
-                {
-                    this.props.metaManagerContext?.helmet?.script?.toComponent() as ReactNode
-                }
-                <Head></Head>
+            <Html lang="en">
+                <Head />
+                {metamanagerContext?.helmet?.title?.toComponent() as ReactNode}
+                {metamanagerContext?.helmet?.meta?.toComponent() as ReactNode}
+                {metamanagerContext?.helmet?.script?.toComponent() as ReactNode}
                 <body>
                     <Main />
                     <NextScript />
@@ -117,8 +89,6 @@ class MyDocument extends Document<{ metaManagerContext: HelmetContextData }> {
         );
     }
 }
-
-export default MyDocument;
 ```
 
 ### 4. Page file customization
@@ -127,18 +97,64 @@ Import & insert *SEO Helmet component* from *@metamanager/react-seo* to display 
 
 */src/pages/index.tsx*
 ```javascript
-import { Helmet } from '@metamanager/react-seo';
+import { withMetaManagerSEO,  withMetamanagerStaticProps, MetamanagerNextPage } from "@metamanager/react-seo";
 
-export default function Home() {
+const Home: MetamanagerNextPage<{}> = ({ path, apiData}) => {
   return (
     <>
-      {/** meta tags inside the Helmet wrapper will be updated automatically by metamanager API */}
-      <Helmet path="/" />
-
       <main>Add your components here...</main>
     </>
   );
 }
+
+export default withMetaManagerSEO(Home);
+
+export const getStaticProps = withMetamanagerStaticProps<{}>(
+    () => {
+        return { props: { path: "/", } };
+    }, {
+        webSiteId: process.env.MM_WEBSITE_ID,
+        authToken: process.env.MM_AUTH_TOKEN
+    }
+);
+```
+
+*/src/pages/[...path].tsx*
+```javascript
+import { withMetaManagerSEO,  withMetamanagerStaticProps, MetamanagerPageProps } from "@metamanager/react-seo";
+import { GetStaticProps } from "next";
+
+export default function AnyPage() {
+  return (
+    <>
+      <main>Add your components here...</main>
+    </>
+  );
+}
+
+export default withMetaManagerSEO(AnyPage);
+
+export const getStaticPaths = () => {
+    const pageList = new Webpage(process.env.MM_WEBSITE_ID);
+    const urls = pageList.sort();
+    return {
+        paths: urls?.filter(i => i.url !== '/')?.map(i => ({ params: { path: i.url?.startsWith('/') ? i.url.slice(1).split('/') : i.url.split('/') } })) ?? [],
+        fallback: false
+    }
+};
+
+const retriveStaticProps : GetStaticProps<MetamanagerPageProps<{}>, { path : string[]}> =({ params }) => {
+    return {
+        props: {
+            path: params?.path?.join('/')?.startsWith('/') ? params?.path?.join('/') : '/' + params?.path?.join('/')
+        }
+    }
+};
+
+export const getStaticProps = withMetamanagerStaticProps<{}>(retriveStaticProps, {
+    webSiteId: process.env.MM_WEBSITE_ID,
+    authToken: process.env.MM_AUTH_TOKEN
+});
 ```
 
 ## License

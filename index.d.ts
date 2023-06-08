@@ -1,4 +1,15 @@
-declare module "@metamanager/react-seo" {
+import { NextParsedUrlQuery } from "next/dist/server/request-meta";
+
+declare module "react-metamanager-plugin" {
+  import {
+    GetServerSideProps,
+    GetServerSidePropsResult,
+    GetStaticProps,
+    GetStaticPropsResult,
+    NextPage,
+    NextPageContext,
+    PreviewData,
+  } from "next";
   import * as React from "react";
 
   interface OtherElementAttributes {
@@ -46,6 +57,7 @@ declare module "@metamanager/react-seo" {
     titleTemplate?: string;
     prioritizeSeoTags?: boolean;
     path?: string;
+    apiData?: Record<string, any>;
   }
 
   export class Helmet extends React.Component<
@@ -95,7 +107,7 @@ declare module "@metamanager/react-seo" {
     helmet?: HelmetServerState;
     apiData?: any;
   }
-  
+
   export class HelmetData {
     constructor(context: any);
     context: {
@@ -109,4 +121,58 @@ declare module "@metamanager/react-seo" {
   > {
     static canUseDOM: boolean;
   }
+  /**
+   * version-2 types
+   */
+
+  export type MetamanagerPageProps<T> = { path: string } & T;
+
+  export type MetamanagerNextPage<T> = NextPage<MetamanagerPropsResult<T>>;
+
+  export function withMetaManagerSEO<T>(
+    Component: NextPage<MetamanagerPageProps<T>>
+  ): MetamanagerNextPage<T>;
+
+  export type MetamanagerOptions = {
+    webSiteId: number;
+    authToken: string;
+  };
+  export type MetamanagerPropsCallback<T> =
+    | GetServerSideProps<MetamanagerPageProps<T>>
+    | GetStaticProps<MetamanagerPageProps<T>>;
+
+  export type MetamanagerPropsResult<T> = MetamanagerPageProps<T> & {
+    apiData: Record<string, any>;
+  };
+  export function withMetamanagerProps<T extends Record<string, any>>(
+    callback: MetamanagerPropsCallback<T>,
+    metamanagerOptions: MetamanagerOptions
+  ): (
+    props: NextPageContext
+  ) =>
+    | GetStaticPropsResult<MetamanagerPropsResult<T>>
+    | GetServerSidePropsResult<MetamanagerPropsResult<T>>;
+
+  
+  export function withMetamanagerServerProps<
+    Props extends { [key: string]: any } = { [key: string]: any },
+    Params extends ParsedUrlQuery = NextParsedUrlQuery,
+    Preview extends PreviewData = PreviewData
+  >(
+    callback: GetServerSideProps<MetamanagerPageProps<Props, Params, Preview>>,
+    metamanagerOptions: MetamanagerOptions
+  ): (
+    props: NextPageContext
+  ) => GetServerSidePropsResult<MetamanagerPropsResult<Props>>;
+
+  export function withMetamanagerStaticProps<
+    Props extends { [key: string]: any } = { [key: string]: any },
+    Params extends ParsedUrlQuery = NextParsedUrlQuery,
+    Preview extends PreviewData = PreviewData
+  >(
+    callback: GetStaticProps<MetamanagerPageProps<Props, Params, Preview>>,
+    metamanagerOptions: MetamanagerOptions
+  ): (
+    props: NextPageContext
+  ) => GetServerSidePropsResult<MetamanagerPropsResult<Props>>;
 }
